@@ -11,6 +11,18 @@ A sophisticated Neural Machine Translation system that translates Urdu poetry to
 - **Real-time Translation**: Instant Urdu to Roman Urdu conversion
 - **Confidence Scoring**: Model confidence for each translation
 
+## 🚀 Live Demo
+
+[![Hugging Face Spaces](https://img.shields.io/badge/Hugging%20Face-Spaces-blue?style=for-the-badge&logo=huggingface&logoColor=white)](https://huggingface.co/spaces)
+
+**Try the live translation**: [Your Hugging Face Model URL]
+
+### 🌟 Demo Features
+- **Real-time Translation**: Instant Urdu to Roman Urdu conversion
+- **Multiple Models**: Choose from 3 different model configurations
+- **Professional UI**: Clean, intuitive interface
+- **Confidence Scores**: See translation confidence levels
+
 ## 📊 Model Performance
 
 | Experiment | Model Size | Embed Dim | Hidden Dim | Encoder Layers | Decoder Layers | Accuracy |
