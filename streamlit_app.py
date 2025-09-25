@@ -8,6 +8,9 @@ from typing import List, Tuple, Dict, Any
 import warnings
 warnings.filterwarnings('ignore')
 
+# Note: torchtext is not needed for the deployed version
+# All tokenization is handled by our custom BPE implementation
+
 # Set page config
 st.set_page_config(
     page_title="Urdu to Roman Urdu Translator",
