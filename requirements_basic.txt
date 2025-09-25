@@ -2,3 +2,4 @@ streamlit
 torch
 numpy
 pandas
+huggingface_hub

@@ -6,6 +6,7 @@ import re
 import unicodedata
 from typing import List, Tuple, Dict, Any
 import warnings
+from huggingface_hub import hf_hub_download, snapshot_download
 warnings.filterwarnings('ignore')
 
 # Note: torchtext is not needed for the deployed version
@@ -258,19 +259,43 @@ class Seq2SeqModel(torch.nn.Module):
 
 # Load model function
 @st.cache_resource
-def load_model_and_tokenizers(model_path, tokenizer_path):
-    """Load model and tokenizers with caching"""
+def load_model_and_tokenizers(model_choice):
+    """Load model and tokenizers from Hugging Face with caching"""
     try:
-        # Check if files exist
-        if not os.path.exists(model_path):
-            st.error(f"❌ Model file not found: {model_path}")
-            st.info("💡 Please train the models first using my-model-final-collab.ipynb in Google Colab and download the .pth files to the models/ directory.")
-            return None, None, None
+        # Hugging Face repository
+        repo_id = "tahir-next/Urdu-RomanUrdu"
         
-        if not os.path.exists(tokenizer_path):
-            st.error(f"❌ Tokenizer file not found: {tokenizer_path}")
-            st.info("💡 Please ensure tokenizer files are in the tokenizers/ directory.")
-            return None, None, None
+        # Model file mappings
+        model_files = {
+            "Experiment 1 (Small)": "best_model_exp_1.pth",
+            "Experiment 2 (Medium)": "best_model_exp_2.pth", 
+            "Experiment 3 (Large)": "best_model_exp_3.pth"
+        }
+        
+        tokenizer_files = {
+            "Experiment 1 (Small)": "exp_1_tokenizers.pkl",
+            "Experiment 2 (Medium)": "exp_2_tokenizers.pkl",
+            "Experiment 3 (Large)": "exp_3_tokenizers.pkl"
+        }
+        
+        model_filename = model_files[model_choice]
+        tokenizer_filename = tokenizer_files[model_choice]
+        
+        # Download model file from Hugging Face
+        with st.spinner(f"🔄 Downloading {model_choice} model from Hugging Face..."):
+            model_path = hf_hub_download(
+                repo_id=repo_id,
+                filename=model_files[model_choice],
+                cache_dir="./hf_cache"
+            )
+        
+        # Download tokenizer file from Hugging Face
+        with st.spinner(f"🔄 Downloading {model_choice} tokenizers from Hugging Face..."):
+            tokenizer_path = hf_hub_download(
+                repo_id=repo_id,
+                filename=tokenizer_files[model_choice],
+                cache_dir="./hf_cache"
+            )
         
         # Load checkpoint
         checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
@@ -383,33 +408,17 @@ def main():
         index=1  # Default to Experiment 2
     )
     
-    # Model paths (you'll need to update these)
-    model_paths = {
-        "Experiment 1 (Small)": "models/best_model_exp_1.pth",
-        "Experiment 2 (Medium)": "models/best_model_exp_2.pth",
-        "Experiment 3 (Large)": "models/best_model_exp_3.pth"
-    }
-    
-    tokenizer_paths = {
-        "Experiment 1 (Small)": "tokenizers/exp_1_tokenizers.pkl",
-        "Experiment 2 (Medium)": "tokenizers/exp_2_tokenizers.pkl",
-        "Experiment 3 (Large)": "tokenizers/exp_3_tokenizers.pkl"
-    }
-    
-    model_path = model_paths[model_option]
-    tokenizer_path = tokenizer_paths[model_option]
-    
-    # Load model
-    if st.sidebar.button("🔄 Load Model"):
-        with st.spinner("Loading model..."):
-            model, src_tokenizer, tgt_tokenizer = load_model_and_tokenizers(model_path, tokenizer_path)
+    # Load model from Hugging Face
+    if st.sidebar.button("🔄 Load Model from Hugging Face"):
+        with st.spinner("Loading model from Hugging Face..."):
+            model, src_tokenizer, tgt_tokenizer = load_model_and_tokenizers(model_option)
             if model:
-                st.sidebar.success("✅ Model loaded successfully!")
+                st.sidebar.success("✅ Model loaded successfully from Hugging Face!")
                 st.session_state.model = model
                 st.session_state.src_tokenizer = src_tokenizer
                 st.session_state.tgt_tokenizer = tgt_tokenizer
             else:
-                st.sidebar.error("❌ Failed to load model")
+                st.sidebar.error("❌ Failed to load model from Hugging Face")
     
     # Check if model is loaded
     if 'model' not in st.session_state:
