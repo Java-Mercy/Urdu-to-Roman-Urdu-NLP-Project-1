@@ -258,6 +258,17 @@ class Seq2SeqModel(torch.nn.Module):
 def load_model_and_tokenizers(model_path, tokenizer_path):
     """Load model and tokenizers with caching"""
     try:
+        # Check if files exist
+        if not os.path.exists(model_path):
+            st.error(f"❌ Model file not found: {model_path}")
+            st.info("💡 Please train the models first using my-model-final-collab.ipynb in Google Colab and download the .pth files to the models/ directory.")
+            return None, None, None
+        
+        if not os.path.exists(tokenizer_path):
+            st.error(f"❌ Tokenizer file not found: {tokenizer_path}")
+            st.info("💡 Please ensure tokenizer files are in the tokenizers/ directory.")
+            return None, None, None
+        
         # Load checkpoint
         checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
         state_dict = checkpoint['model_state_dict']

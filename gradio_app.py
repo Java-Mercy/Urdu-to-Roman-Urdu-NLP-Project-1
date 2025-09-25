@@ -223,6 +223,14 @@ def load_model_and_tokenizers(model_choice):
         model_path = model_paths[model_choice]
         tokenizer_path = tokenizer_paths[model_choice]
         
+        # Check if model file exists
+        if not os.path.exists(model_path):
+            return f"❌ Model file not found: {model_path}\n\n💡 Please train the models first using my-model-final-collab.ipynb in Google Colab and download the .pth files to the models/ directory."
+        
+        # Check if tokenizer file exists
+        if not os.path.exists(tokenizer_path):
+            return f"❌ Tokenizer file not found: {tokenizer_path}\n\n💡 Please ensure tokenizer files are in the tokenizers/ directory."
+        
         # Load checkpoint
         checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
         state_dict = checkpoint['model_state_dict']
