@@ -1,0 +1,51 @@
+🎯 **CAROUSEL POST: "From Urdu Poetry to Global Understanding"**
+
+---
+
+**SLIDE 1 - HOOK:**
+"Urdu poetry is beautiful, but what if the world could understand it? 🌍✨"
+
+**SLIDE 2 - PROBLEM:**
+"Language barriers prevent global appreciation of cultural treasures 📚
+• Urdu poetry remains inaccessible to non-native speakers
+• Traditional transliteration lacks poetic nuance
+• Cultural heritage gets lost in translation"
+
+**SLIDE 3 - SOLUTION:**
+"Built an AI translator that understands poetry! 🤖
+• Neural Machine Translation with BiLSTM architecture
+• Custom BPE tokenization from scratch
+• Attention mechanisms for context understanding"
+
+**SLIDE 4 - TECHNICAL HIGHLIGHTS:**
+"Technical excellence meets cultural sensitivity ⚙️
+• 2-layer BiLSTM encoder + 4-layer LSTM decoder
+• 3 hyperparameter experiments for optimization
+• Comprehensive evaluation with BLEU & CER metrics"
+
+**SLIDE 5 - REAL IMPACT:**
+"Beyond code - real-world applications 🌟
+• Students learning Urdu literature
+• Researchers studying cross-cultural patterns
+• Digital libraries preserving heritage
+• Language learners understanding pronunciation"
+
+**SLIDE 6 - VISION:**
+"Technology should bridge cultures, not divide them 🌉
+Every algorithm I write aims to preserve cultural beauty while making it globally accessible."
+
+**SLIDE 7 - CALL TO ACTION:**
+"What cultural preservation challenges should AI tackle next? 💭
+Drop your thoughts below! 👇"
+
+---
+
+**HASHTAGS:**
+#MachineLearning #NLP #Urdu #Poetry #AI #CulturalHeritage #TechForGood #NeuralTranslation #PyTorch #DeepLearning
+
+---
+
+**ENGAGEMENT PROMPTS:**
+• "What's your favorite Urdu poetry line?"
+• "How can AI help preserve your culture?"
+• "Share a cultural translation challenge you've faced!"

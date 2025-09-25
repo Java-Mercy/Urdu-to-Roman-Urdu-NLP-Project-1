@@ -1,0 +1,40 @@
+🚀 Excited to share my latest project: Building a Neural Machine Translation system for Urdu poetry to Roman Urdu transliteration!
+
+📚 **The Challenge:**
+Urdu poetry is a treasure trove of cultural heritage, but language barriers often prevent its global appreciation. Traditional transliteration methods lack the nuance needed for poetic text, making it difficult for non-native speakers to experience the beauty of Urdu literature.
+
+🎯 **My Solution:**
+I developed a sophisticated Neural Machine Translation (NMT) system using PyTorch that:
+• Implements a 2-layer BiLSTM encoder and 4-layer LSTM decoder architecture
+• Uses custom Byte-Pair Encoding (BPE) tokenization built from scratch
+• Trains on authentic Urdu poetry datasets with multiple hyperparameter experiments
+• Achieves impressive accuracy rates with comprehensive evaluation metrics
+
+🔬 **Technical Innovation:**
+• Built custom BPE tokenizer without external libraries (as per academic requirements)
+• Implemented attention mechanisms for better context understanding
+• Created checkpoint systems for efficient training and time-saving
+• Conducted extensive hyperparameter tuning across 3 different model configurations
+
+🌍 **Real-World Impact:**
+This technology can bridge cultural gaps by making Urdu poetry accessible to global audiences. Imagine:
+• Students learning Urdu literature with accurate transliterations
+• Researchers studying cross-cultural poetry patterns
+• Digital libraries preserving and sharing cultural heritage
+• Language learners understanding pronunciation through Roman script
+
+📊 **Results:**
+The system demonstrates strong performance with comprehensive evaluation including BLEU scores, perplexity metrics, and character error rates. The model successfully translates complex poetic structures while maintaining linguistic accuracy.
+
+💡 **Vision:**
+I believe technology should preserve and share cultural heritage. This project represents a step toward making world literature more accessible while respecting the original language's beauty and complexity.
+
+🔧 **Tech Stack:** PyTorch, Python, Custom BPE Implementation, Google Colab, Streamlit
+
+This project taught me the importance of balancing technical excellence with cultural sensitivity in AI applications. Every line of code was written with the goal of preserving the essence of Urdu poetry while making it globally accessible.
+
+#MachineLearning #NLP #NeuralMachineTranslation #Urdu #Poetry #AI #PyTorch #CulturalHeritage #LanguageTechnology #DeepLearning #ArtificialIntelligence #TechForGood
+
+---
+
+*What cultural preservation challenges do you think AI can help solve? I'd love to hear your thoughts!*
