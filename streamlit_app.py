@@ -256,6 +256,56 @@ class Seq2SeqModel(torch.nn.Module):
                 input_token = output.argmax(2)
         
         return outputs
+    
+    def inference(self, src, src_tokenizer, tgt_tokenizer, max_length=50):
+        """
+        Inference method for generating translations
+        """
+        self.eval()
+        with torch.no_grad():
+            batch_size = src.size(0)
+            device = src.device
+            
+            # Encoder
+            encoder_outputs, (hidden, cell) = self.encoder(src)
+            
+            # Create mask
+            mask = torch.ones(batch_size, src.size(1), device=device)
+            
+            # Initialize decoder
+            decoder_hidden = self.decoder.hidden_projection(hidden).unsqueeze(0)
+            decoder_cell = self.decoder.cell_projection(cell).unsqueeze(0)
+            decoder_hidden = decoder_hidden.repeat(self.decoder.num_layers, 1, 1)
+            decoder_cell = decoder_cell.repeat(self.decoder.num_layers, 1, 1)
+            
+            # Start with SOS token
+            sos_id = tgt_tokenizer.vocab.get('<sos>', 1)
+            eos_id = tgt_tokenizer.vocab.get('<eos>', 2)
+            
+            input_token = torch.full((batch_size, 1), sos_id, device=device)
+            
+            outputs = []
+            
+            for _ in range(max_length):
+                output, decoder_hidden, decoder_cell, _ = self.decoder(
+                    input_token, decoder_hidden, decoder_cell, encoder_outputs, mask)
+                
+                predicted = output.argmax(2)
+                outputs.append(predicted)
+                
+                input_token = predicted
+                
+                # Stop if all sequences have generated EOS
+                if (predicted == eos_id).all():
+                    break
+            
+            # Concatenate outputs
+            if outputs:
+                outputs = torch.cat(outputs, dim=1)
+            else:
+                outputs = torch.empty(batch_size, 0, device=device)
+            
+            return outputs
 
 # Load model function
 @st.cache_resource
@@ -351,8 +401,25 @@ def translate_urdu_poetry(model, src_tokenizer, tgt_tokenizer, urdu_text, max_le
     cleaner = TextCleaner()
     cleaned_urdu = cleaner.clean_urdu(urdu_text)
     
+    # Check if input is empty after cleaning
+    if not cleaned_urdu or len(cleaned_urdu.strip()) == 0:
+        return {
+            'translation': "Error: Empty input after cleaning",
+            'confidence': 0.0,
+            'tokens_generated': 0
+        }
+    
     # Tokenize
     src_tokens = src_tokenizer.encode(cleaned_urdu)
+    
+    # Check if tokenization produced any tokens
+    if not src_tokens or len(src_tokens) == 0:
+        return {
+            'translation': "Error: No tokens generated from input",
+            'confidence': 0.0,
+            'tokens_generated': 0
+        }
+    
     src_tensor = torch.tensor([src_tokens], dtype=torch.long)
     src_lengths = torch.tensor([len(src_tokens)], dtype=torch.long)
     
@@ -363,21 +430,35 @@ def translate_urdu_poetry(model, src_tokenizer, tgt_tokenizer, urdu_text, max_le
     target_sequence = [sos_token]
     target_tensor = torch.tensor([target_sequence], dtype=torch.long)
     
-    # Generate translation
+    # Generate translation using inference method
     with torch.no_grad():
-        for step in range(max_length):
-            outputs = model(src_tensor, target_tensor, src_lengths, teacher_forcing_ratio=0.0)
-            next_token_logits = outputs[0, -1, :]
-            next_token = torch.argmax(next_token_logits, dim=-1).item()
-            
-            if next_token == eos_token:
-                break
-            
-            target_sequence.append(next_token)
-            target_tensor = torch.tensor([target_sequence], dtype=torch.long)
-    
-    # Decode
-    generated_text = tgt_tokenizer.decode(target_sequence)
+        # Use the model's inference method if available, otherwise use simple generation
+        try:
+            # Try to use model's inference method
+            if hasattr(model, 'inference'):
+                generated_tokens = model.inference(src_tensor, src_tokenizer, tgt_tokenizer, max_length)
+                generated_text = tgt_tokenizer.decode(generated_tokens[0].tolist())
+            else:
+                # Fallback to manual generation
+                for step in range(max_length):
+                    outputs = model(src_tensor, target_tensor, src_lengths, teacher_forcing_ratio=0.0)
+                    next_token_logits = outputs[0, -1, :]
+                    next_token = torch.argmax(next_token_logits, dim=-1).item()
+                    
+                    if next_token == eos_token:
+                        break
+                    
+                    target_sequence.append(next_token)
+                    target_tensor = torch.tensor([target_sequence], dtype=torch.long)
+                
+                # Decode
+                generated_text = tgt_tokenizer.decode(target_sequence)
+        except Exception as e:
+            return {
+                'translation': f"Error during generation: {str(e)}",
+                'confidence': 0.0,
+                'tokens_generated': len(target_sequence)
+            }
     
     # Calculate confidence
     with torch.no_grad():
