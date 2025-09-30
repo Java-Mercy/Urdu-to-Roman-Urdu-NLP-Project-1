@@ -266,8 +266,8 @@ def load_model_and_tokenizers():
         repo_id = "tahir-next/Urdu-RomanUrdu"  # Replace with your actual HF repo
             
         # Single model files
-        model_filename = "best_model.pth"  # Your trained model file
-        tokenizer_filename = "tokenizers.pkl"  # Your tokenizer file
+        model_filename = "best_model_exp_3.pth"  # Your trained model file
+        tokenizer_filename = "exp_3_tokenizers.pkl"  # Your tokenizer file
         
         # Get Hugging Face token (for private repos)
         hf_token = None
