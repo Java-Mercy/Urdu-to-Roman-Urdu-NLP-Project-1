@@ -269,12 +269,22 @@ def load_model_and_tokenizers():
         model_filename = "best_model.pth"  # Your trained model file
         tokenizer_filename = "tokenizers.pkl"  # Your tokenizer file
         
+        # Get Hugging Face token (for private repos)
+        hf_token = None
+        try:
+            # Try to get token from Streamlit secrets
+            hf_token = st.secrets["HF_TOKEN"]
+        except:
+            # If no token in secrets, try environment variable
+            hf_token = os.getenv("HF_TOKEN")
+        
         # Download model file from Hugging Face
         with st.spinner("🔄 Downloading model from Hugging Face..."):
             model_path = hf_hub_download(
                 repo_id=repo_id,
                 filename=model_filename,
-                cache_dir="./hf_cache"
+                cache_dir="./hf_cache",
+                token=hf_token
             )
         
         # Download tokenizer file from Hugging Face
@@ -282,7 +292,8 @@ def load_model_and_tokenizers():
             tokenizer_path = hf_hub_download(
                 repo_id=repo_id,
                 filename=tokenizer_filename,
-                cache_dir="./hf_cache"
+                cache_dir="./hf_cache",
+                token=hf_token
             )
         
         # Load checkpoint
