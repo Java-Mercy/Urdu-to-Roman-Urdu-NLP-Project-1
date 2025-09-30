@@ -259,41 +259,29 @@ class Seq2SeqModel(torch.nn.Module):
 
 # Load model function
 @st.cache_resource
-def load_model_and_tokenizers(model_choice):
+def load_model_and_tokenizers():
     """Load model and tokenizers from Hugging Face with caching"""
     try:
-        # Hugging Face repository
-        repo_id = "tahir-next/Urdu-RomanUrdu"
-        
-        # Model file mappings
-        model_files = {
-            "Experiment 1 (Small)": "best_model_exp_1.pth",
-            "Experiment 2 (Medium)": "best_model_exp_2.pth", 
-            "Experiment 3 (Large)": "best_model_exp_3.pth"
-        }
-        
-        tokenizer_files = {
-            "Experiment 1 (Small)": "exp_1_tokenizers.pkl",
-            "Experiment 2 (Medium)": "exp_2_tokenizers.pkl",
-            "Experiment 3 (Large)": "exp_3_tokenizers.pkl"
-        }
-        
-        model_filename = model_files[model_choice]
-        tokenizer_filename = tokenizer_files[model_choice]
+        # Hugging Face repository - UPDATE THIS WITH YOUR ACTUAL REPO
+        repo_id = "tahir-next/Urdu-RomanUrdu"  # Replace with your actual HF repo
+            
+        # Single model files
+        model_filename = "best_model.pth"  # Your trained model file
+        tokenizer_filename = "tokenizers.pkl"  # Your tokenizer file
         
         # Download model file from Hugging Face
-        with st.spinner(f"🔄 Downloading {model_choice} model from Hugging Face..."):
+        with st.spinner("🔄 Downloading model from Hugging Face..."):
             model_path = hf_hub_download(
                 repo_id=repo_id,
-                filename=model_files[model_choice],
+                filename=model_filename,
                 cache_dir="./hf_cache"
             )
         
         # Download tokenizer file from Hugging Face
-        with st.spinner(f"🔄 Downloading {model_choice} tokenizers from Hugging Face..."):
+        with st.spinner("🔄 Downloading tokenizers from Hugging Face..."):
             tokenizer_path = hf_hub_download(
                 repo_id=repo_id,
-                filename=tokenizer_files[model_choice],
+                filename=tokenizer_filename,
                 cache_dir="./hf_cache"
             )
         
@@ -398,32 +386,18 @@ def main():
     st.markdown('<h1 class="main-header">🌙 Urdu to Roman Urdu Translator</h1>', unsafe_allow_html=True)
     st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666;">Neural Machine Translation for Urdu Poetry</p>', unsafe_allow_html=True)
     
-    # Sidebar
-    st.sidebar.title("⚙️ Model Settings")
-    
-    # Model selection
-    model_option = st.sidebar.selectbox(
-        "Select Model:",
-        ["Experiment 1 (Small)", "Experiment 2 (Medium)", "Experiment 3 (Large)"],
-        index=1  # Default to Experiment 2
-    )
-    
-    # Load model from Hugging Face
-    if st.sidebar.button("🔄 Load Model from Hugging Face"):
-        with st.spinner("Loading model from Hugging Face..."):
-            model, src_tokenizer, tgt_tokenizer = load_model_and_tokenizers(model_option)
+    # Auto-load model from Hugging Face
+    if 'model' not in st.session_state:
+        with st.spinner("🔄 Loading model from Hugging Face..."):
+            model, src_tokenizer, tgt_tokenizer = load_model_and_tokenizers()
             if model:
-                st.sidebar.success("✅ Model loaded successfully from Hugging Face!")
                 st.session_state.model = model
                 st.session_state.src_tokenizer = src_tokenizer
                 st.session_state.tgt_tokenizer = tgt_tokenizer
+                st.success("✅ Model loaded successfully from Hugging Face!")
             else:
-                st.sidebar.error("❌ Failed to load model from Hugging Face")
-    
-    # Check if model is loaded
-    if 'model' not in st.session_state:
-        st.warning("⚠️ Please load a model first using the sidebar.")
-        return
+                st.error("❌ Failed to load model from Hugging Face")
+                st.stop()
     
     # Main content
     col1, col2 = st.columns([1, 1])
